@@ -1,64 +1,48 @@
-# Nuxt Starter Template
+# PaperPulse 📊
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+**PaperPulse** is a bibliometric comparison engine designed to contrast the impact profiles of academic publications side-by-side in a "Face-off" style dashboard.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+By entering two DOIs, PaperPulse generates an interactive dashboard that fetches real-time data from multiple open knowledge bases. It provides insights into citation dynamics, alternative metrics, concept taxonomies, and Open Science indicators.
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+### 🌐 Integrated APIs
+- **[OpenAlex](https://openalex.org/):** Metadata, concept taxonomy, Open Access status, and baseline citation counts.
+- **[Semantic Scholar](https://www.semanticscholar.org/):** Highly influential citations, intelligent summaries (TLDR), and recent traction.
+- **[Dimensions](https://www.dimensions.ai/):** Alternative metrics such as Relative Citation Ratio (RCR), Field Citation Ratio (FCR), and recent citations.
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+### 🛠️ Tech Stack
+- **Framework:** Nuxt 3 (Vue 3, Composition API)
+- **Styling & UI:** Tailwind CSS + Nuxt UI
+- **Charts:** ECharts
+- **Architecture:** Client-side fetching coupled with a Nuxt Nitro Proxy layer to bypass CORS restrictions for specific APIs.
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+---
 
-## Quick Start
+## 🚀 Quick Start (Local Setup)
 
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
-```
+Ensure you have **Node.js 18+** and **pnpm** installed.
 
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
-
+**1. Clone and install dependencies:**
 ```bash
+git clone <REPOSITORY_URL>
+cd paperpulse
 pnpm install
 ```
 
-## Development Server
+**2. Environment variables (Optional):**
+Create a `.env` file for your API keys to prevent rate-limiting:
+```env
+NUXT_PUBLIC_OPEN_ALEX_API_KEY=your_openalex_key
+NUXT_SEMANTIC_SCHOLAR_API_KEY=your_semanticscholar_key
+```
 
-Start the development server on `http://localhost:3000`:
-
+**3. Run the development server:**
 ```bash
 pnpm dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Production
-
-Build the application for production:
-
+**4. Build for production:**
 ```bash
 pnpm build
+node .output/server/index.mjs
 ```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Renovate integration
-
-Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
