@@ -33,6 +33,12 @@ defineProps<{
       <ConceptTags :concepts="data.paperB.concepts" variant="b" />
     </div>
 
+    <!-- 4.5 Altmetric Signals Placeholder -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-12 border-t border-gray-100 dark:border-gray-800 pt-12">
+      <AltmetricSignals variant="a" />
+      <AltmetricSignals variant="b" />
+    </div>
+
     <!-- 5. Citation Timeline (Full Width) -->
     <div class="w-full pt-4">
       <CitationTimeline :paper-a="data.paperA" :paper-b="data.paperB" />
