@@ -7,9 +7,41 @@ defineProps<{
 </script>
 
 <template>
-  <div class="py-4 text-center text-gray-400">
-    <!-- Placeholder: dashboard components will be implemented in Part 4 -->
-    <p class="text-sm">Dashboard data loaded successfully. Components coming in Part 4.</p>
-    <pre class="mt-4 text-left text-xs bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-auto">{{ JSON.stringify(data, null, 2) }}</pre>
+  <div class="space-y-12 pb-12">
+    
+    <!-- 1. Paper Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <PaperCard :paper="data.paperA" variant="a" />
+      <PaperCard :paper="data.paperB" variant="b" />
+    </div>
+
+    <!-- 2. Citation Dynamics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <CitationDynamics :citations="data.paperA.citations" variant="a" />
+      <CitationDynamics :citations="data.paperB.citations" variant="b" />
+    </div>
+
+    <!-- 3. Cross-Source Aggregation -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <CrossSourceTable :sources="data.paperA.crossSource" variant="a" />
+      <CrossSourceTable :sources="data.paperB.crossSource" variant="b" />
+    </div>
+
+    <!-- 4. Primary Concepts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <ConceptTags :concepts="data.paperA.concepts" variant="a" />
+      <ConceptTags :concepts="data.paperB.concepts" variant="b" />
+    </div>
+
+    <!-- 5. Citation Timeline (Full Width) -->
+    <div class="w-full pt-4">
+      <CitationTimeline :paper-a="data.paperA" :paper-b="data.paperB" />
+    </div>
+
+    <!-- 6. Open Science Checklist (Full Width wrapper) -->
+    <div class="w-full pt-4">
+      <OpenScienceChecklist :paper-a="data.paperA" :paper-b="data.paperB" />
+    </div>
+    
   </div>
 </template>
