@@ -74,8 +74,8 @@ function buildCitations(work: OpenAlexWork): CitationDynamics {
   // Growth: compare last 2 years available
   let growthPercentage = 0
   if (countsByYear.length >= 2) {
-    const recent = countsByYear[countsByYear.length - 1].count
-    const previous = countsByYear[countsByYear.length - 2].count
+    const recent = countsByYear[countsByYear.length - 1]?.count ?? 0
+    const previous = countsByYear[countsByYear.length - 2]?.count ?? 0
     if (previous > 0) {
       growthPercentage = Math.round(((recent - previous) / previous) * 1000) / 10
     }

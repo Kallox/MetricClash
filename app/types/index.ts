@@ -50,6 +50,13 @@ export interface OpenScienceChecklist {
   total: number
 }
 
+export interface DimensionsMetrics {
+  timesCited: number
+  recentCitations: number
+  relativeCitationRatio: number
+  fieldCitationRatio: number
+}
+
 export interface PaperProfile {
   metadata: PaperMetadata
   citations: CitationDynamics
@@ -57,6 +64,7 @@ export interface PaperProfile {
   concepts: ConceptTag[]
   openScience: OpenScienceChecklist
   tldr: string | null
+  dimensions: DimensionsMetrics | null
 }
 
 export interface ComparisonResult {

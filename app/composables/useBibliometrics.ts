@@ -1,6 +1,7 @@
 import type { ComparisonResult, PaperProfile } from '~/types'
 import { fetchOpenAlexPaper } from './useOpenAlex'
 import { fetchSemanticScholarPaper } from './useSemanticScholar'
+import { fetchDimensionsData, type DimensionsData } from './useDimensions'
 
 export function useBibliometrics() {
   const loading = ref(false)
@@ -13,12 +14,14 @@ export function useBibliometrics() {
     data.value = null
 
     try {
-      // Run all 4 API calls in parallel
-      const [oaA, oaB, s2A, s2B] = await Promise.allSettled([
+      // Run all API calls in parallel
+      const [oaA, oaB, s2A, s2B, dimA, dimB] = await Promise.allSettled([
         fetchOpenAlexPaper(doiA),
         fetchOpenAlexPaper(doiB),
         fetchSemanticScholarPaper(doiA),
-        fetchSemanticScholarPaper(doiB)
+        fetchSemanticScholarPaper(doiB),
+        fetchDimensionsData(doiA),
+        fetchDimensionsData(doiB)
       ])
 
       // OpenAlex is required — fail if either paper not found
@@ -32,13 +35,15 @@ export function useBibliometrics() {
       const openAlexA = oaA.value
       const openAlexB = oaB.value
 
-      // Semantic Scholar is optional — use defaults if failed
+      // Semantic Scholar and Dimensions are optional — use defaults if failed
       const s2DataA = s2A.status === 'fulfilled' ? s2A.value : null
       const s2DataB = s2B.status === 'fulfilled' ? s2B.value : null
+      const dimDataA = dimA.status === 'fulfilled' ? dimA.value : null
+      const dimDataB = dimB.status === 'fulfilled' ? dimB.value : null
 
-      // Build profiles by merging both sources
-      const paperA = mergeProfile(openAlexA, s2DataA)
-      const paperB = mergeProfile(openAlexB, s2DataB)
+      // Build profiles by merging sources
+      const paperA = mergeProfile(openAlexA, s2DataA, dimDataA)
+      const paperB = mergeProfile(openAlexB, s2DataB, dimDataB)
 
       // Calculate cross-source coverage percentages
       calculateCoverage(paperA)
@@ -67,7 +72,8 @@ export function useBibliometrics() {
 
 function mergeProfile(
   oa: Awaited<ReturnType<typeof fetchOpenAlexPaper>>,
-  s2: Awaited<ReturnType<typeof fetchSemanticScholarPaper>> | null
+  s2: Awaited<ReturnType<typeof fetchSemanticScholarPaper>> | null,
+  dim: DimensionsData | null
 ): PaperProfile {
   const citations = { ...oa.citations }
 
@@ -97,7 +103,13 @@ function mergeProfile(
     crossSource,
     concepts: oa.concepts,
     openScience: oa.openScience,
-    tldr: s2?.tldr || null
+    tldr: s2?.tldr || null,
+    dimensions: dim ? {
+      timesCited: dim.times_cited,
+      recentCitations: dim.recent_citations,
+      relativeCitationRatio: dim.relative_citation_ratio,
+      fieldCitationRatio: dim.field_citation_ratio
+    } : null
   }
 }
 
