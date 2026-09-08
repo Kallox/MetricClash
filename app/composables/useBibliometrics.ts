@@ -4,6 +4,8 @@ import { fetchSemanticScholarPaper } from './useSemanticScholar'
 import { fetchDimensionsData, type DimensionsData } from './useDimensions'
 import { fetchCrossrefData, type CrossrefData } from './useCrossref'
 
+const profileCache = new Map<string, PaperProfile>()
+
 export function useBibliometrics() {
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -15,16 +17,22 @@ export function useBibliometrics() {
     data.value = null
 
     try {
-      // Run all API calls in parallel
+      let paperA = profileCache.get(doiA)
+      let paperB = profileCache.get(doiB)
+
+      const fetchA = !paperA
+      const fetchB = !paperB
+
+      // Run all necessary API calls in parallel
       const [oaA, oaB, s2A, s2B, dimA, dimB, crA, crB] = await Promise.allSettled([
-        fetchOpenAlexPaper(doiA),
-        fetchOpenAlexPaper(doiB),
-        fetchSemanticScholarPaper(doiA),
-        fetchSemanticScholarPaper(doiB),
-        fetchDimensionsData(doiA),
-        fetchDimensionsData(doiB),
-        fetchCrossrefData(doiA),
-        fetchCrossrefData(doiB)
+        fetchA ? fetchOpenAlexPaper(doiA) : Promise.reject('cached'),
+        fetchB ? fetchOpenAlexPaper(doiB) : Promise.reject('cached'),
+        fetchA ? fetchSemanticScholarPaper(doiA) : Promise.reject('cached'),
+        fetchB ? fetchSemanticScholarPaper(doiB) : Promise.reject('cached'),
+        fetchA ? fetchDimensionsData(doiA) : Promise.reject('cached'),
+        fetchB ? fetchDimensionsData(doiB) : Promise.reject('cached'),
+        fetchA ? fetchCrossrefData(doiA) : Promise.reject('cached'),
+        fetchB ? fetchCrossrefData(doiB) : Promise.reject('cached')
       ])
 
       const s2DataA = s2A.status === 'fulfilled' ? s2A.value : null
@@ -35,31 +43,33 @@ export function useBibliometrics() {
       const crDataB = crB.status === 'fulfilled' ? crB.value : null
 
       // OpenAlex is the primary source — if it fails, fallback to Semantic Scholar
-      let openAlexA
-      if (oaA.status === 'fulfilled') {
-        openAlexA = oaA.value
-      } else if (s2DataA) {
-        openAlexA = fallbackOpenAlex(s2DataA, doiA)
-      } else {
-        throw new Error(`Could not fetch Paper A from OpenAlex or Semantic Scholar`)
+      if (!paperA) {
+        let openAlexA
+        if (oaA.status === 'fulfilled') {
+          openAlexA = oaA.value
+        } else if (s2DataA) {
+          openAlexA = fallbackOpenAlex(s2DataA, doiA)
+        } else {
+          throw new Error(`Could not fetch Paper A from OpenAlex or Semantic Scholar`)
+        }
+        paperA = mergeProfile(openAlexA, s2DataA, dimDataA, crDataA)
+        calculateCoverage(paperA)
+        profileCache.set(doiA, paperA)
       }
 
-      let openAlexB
-      if (oaB.status === 'fulfilled') {
-        openAlexB = oaB.value
-      } else if (s2DataB) {
-        openAlexB = fallbackOpenAlex(s2DataB, doiB)
-      } else {
-        throw new Error(`Could not fetch Paper B from OpenAlex or Semantic Scholar`)
+      if (!paperB) {
+        let openAlexB
+        if (oaB.status === 'fulfilled') {
+          openAlexB = oaB.value
+        } else if (s2DataB) {
+          openAlexB = fallbackOpenAlex(s2DataB, doiB)
+        } else {
+          throw new Error(`Could not fetch Paper B from OpenAlex or Semantic Scholar`)
+        }
+        paperB = mergeProfile(openAlexB, s2DataB, dimDataB, crDataB)
+        calculateCoverage(paperB)
+        profileCache.set(doiB, paperB)
       }
-
-      // Build profiles by merging sources
-      const paperA = mergeProfile(openAlexA, s2DataA, dimDataA, crDataA)
-      const paperB = mergeProfile(openAlexB, s2DataB, dimDataB, crDataB)
-
-      // Calculate cross-source coverage percentages
-      calculateCoverage(paperA)
-      calculateCoverage(paperB)
 
       // Peak gap: difference of citations at the peak year
       const peakGap = Math.abs(paperA.citations.peakCount - paperB.citations.peakCount)
