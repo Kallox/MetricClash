@@ -1,8 +1,8 @@
-# PaperPulse 📊
+# MetricClash 📊
 
-**PaperPulse** is a bibliometric comparison engine designed to contrast the impact profiles of academic publications side-by-side in a "Face-off" style dashboard.
+**MetricClash** is a bibliometric comparison engine designed to contrast the impact profiles of academic publications side-by-side in a "Face-off" style dashboard.
 
-By entering two DOIs, PaperPulse generates an interactive dashboard that fetches real-time data from multiple open knowledge bases. It provides insights into citation dynamics, alternative metrics, concept taxonomies, and Open Science indicators.
+By entering two DOIs, MetricClash generates an interactive dashboard that fetches real-time data from multiple open knowledge bases. It provides insights into citation dynamics, alternative metrics, concept taxonomies, and Open Science indicators.
 
 ### 🌐 Integrated APIs
 - **[OpenAlex](https://openalex.org/):** Metadata, concept taxonomy, Open Access status, and baseline citation counts.
@@ -24,7 +24,7 @@ Ensure you have **Node.js 18+** and **pnpm** installed.
 **1. Clone and install dependencies:**
 ```bash
 git clone <REPOSITORY_URL>
-cd paperpulse
+cd metricclash
 pnpm install
 ```
 

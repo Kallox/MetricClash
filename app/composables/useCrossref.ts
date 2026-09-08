@@ -10,7 +10,7 @@ export async function fetchCrossrefData(doi: string): Promise<CrossrefData> {
     headers: {
       Accept: 'application/json',
       // Crossref asks for a User-Agent / mailto for their "polite pool" (faster rate limits)
-      'User-Agent': 'PaperPulse/1.0 (https://github.com/PaperPulse; mailto:paperpulse@example.com)'
+      'User-Agent': 'MetricClash/1.0 (https://github.com/MetricClash; mailto:metricclash@example.com)'
     }
   })
 

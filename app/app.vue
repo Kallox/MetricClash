@@ -14,7 +14,7 @@ useHead({
   }
 })
 
-const title = 'PaperPulse — Bibliometric Comparison Engine'
+const title = 'MetricClash — Bibliometric Comparison Engine'
 const description = 'Compare research impact across publications. Analyze citation dynamics, cross-source coverage, concept taxonomies, and open science indicators using OpenAlex and Semantic Scholar.'
 
 useSeoMeta({
@@ -40,7 +40,7 @@ const allApisOnline = computed(() => openAlexOnline.value && semanticScholarOnli
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
             <UIcon name="i-lucide-bar-chart-3" class="text-white text-lg" />
           </div>
-          <span class="text-lg font-bold text-gray-900 dark:text-white">PaperPulse</span>
+          <span class="text-lg font-bold text-gray-900 dark:text-white">MetricClash</span>
         </NuxtLink>
 
         <UBadge
@@ -86,7 +86,7 @@ const allApisOnline = computed(() => openAlexOnline.value && semanticScholarOnli
             <div class="w-5 h-5 rounded bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
               <UIcon name="i-lucide-bar-chart-3" class="text-white text-[10px]" />
             </div>
-            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">PaperPulse</span>
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">MetricClash</span>
           </div>
           <USeparator orientation="vertical" class="h-4" />
           <p class="text-sm text-muted">
