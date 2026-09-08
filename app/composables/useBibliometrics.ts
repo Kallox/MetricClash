@@ -27,24 +27,31 @@ export function useBibliometrics() {
         fetchCrossrefData(doiB)
       ])
 
-      // OpenAlex is required — fail if either paper not found
-      if (oaA.status === 'rejected') {
-        throw new Error(`Could not fetch Paper A from OpenAlex: ${oaA.reason?.message || 'Unknown error'}`)
-      }
-      if (oaB.status === 'rejected') {
-        throw new Error(`Could not fetch Paper B from OpenAlex: ${oaB.reason?.message || 'Unknown error'}`)
-      }
-
-      const openAlexA = oaA.value
-      const openAlexB = oaB.value
-
-      // Semantic Scholar, Dimensions, and Crossref are optional — use defaults if failed
       const s2DataA = s2A.status === 'fulfilled' ? s2A.value : null
       const s2DataB = s2B.status === 'fulfilled' ? s2B.value : null
       const dimDataA = dimA.status === 'fulfilled' ? dimA.value : null
       const dimDataB = dimB.status === 'fulfilled' ? dimB.value : null
       const crDataA = crA.status === 'fulfilled' ? crA.value : null
       const crDataB = crB.status === 'fulfilled' ? crB.value : null
+
+      // OpenAlex is the primary source — if it fails, fallback to Semantic Scholar
+      let openAlexA
+      if (oaA.status === 'fulfilled') {
+        openAlexA = oaA.value
+      } else if (s2DataA) {
+        openAlexA = fallbackOpenAlex(s2DataA, doiA)
+      } else {
+        throw new Error(`Could not fetch Paper A from OpenAlex or Semantic Scholar`)
+      }
+
+      let openAlexB
+      if (oaB.status === 'fulfilled') {
+        openAlexB = oaB.value
+      } else if (s2DataB) {
+        openAlexB = fallbackOpenAlex(s2DataB, doiB)
+      } else {
+        throw new Error(`Could not fetch Paper B from OpenAlex or Semantic Scholar`)
+      }
 
       // Build profiles by merging sources
       const paperA = mergeProfile(openAlexA, s2DataA, dimDataA, crDataA)
@@ -73,6 +80,55 @@ export function useBibliometrics() {
   }
 
   return { loading, error, data, compare }
+}
+
+function fallbackOpenAlex(s2: import('./useSemanticScholar').SemanticScholarResult, doi: string): import('./useOpenAlex').OpenAlexResult {
+  return {
+    metadata: {
+      doi,
+      title: s2.title,
+      authors: s2.authors.map((a, i) => ({
+        name: a.name,
+        position: i === 0 ? 'first' : i === s2.authors.length - 1 ? 'last' : 'middle'
+      })),
+      venue: s2.venue,
+      year: s2.year,
+      oaStatus: s2.isOpenAccess ? 'gold' : 'closed',
+      oaUrl: s2.openAccessPdf?.url || null,
+      pdfUrl: s2.openAccessPdf?.url || null
+    },
+    citations: {
+      totalCitations: s2.citationCount,
+      growthPercentage: 0,
+      citPerYear: Math.round(s2.citationCount / Math.max(1, new Date().getFullYear() - s2.year)),
+      influentialCitations: s2.influentialCitationCount,
+      selfCitations: 0,
+      selfCitationPercentage: 0,
+      countsByYear: [],
+      peakYear: s2.year,
+      peakCount: 0
+    },
+    crossSource: {
+      source: 'OpenAlex',
+      citations: 0, // Fallback implies it wasn't found in OpenAlex
+      coverage: 0
+    },
+    concepts: s2.s2FieldsOfStudy.map(c => ({
+      name: c.category,
+      level: 1,
+      score: 1.0
+    })),
+    openScience: {
+      items: [
+        { label: 'Open Access PDF', available: !!s2.openAccessPdf, icon: 'i-lucide-file-text' },
+        { label: 'Open Data Repository', available: false, icon: 'i-lucide-database' },
+        { label: 'Code / Repository', available: false, icon: 'i-lucide-code' },
+        { label: 'Preprint Available', available: false, icon: 'i-lucide-file-archive' }
+      ],
+      score: !!s2.openAccessPdf ? 1 : 0,
+      total: 4
+    }
+  }
 }
 
 function mergeProfile(

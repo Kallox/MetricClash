@@ -20,11 +20,6 @@ export async function fetchDimensionsData(doi: string): Promise<DimensionsData |
   } catch (err) {
     console.warn(`Could not fetch Dimensions data for ${doi}, returning fallback/placeholder.`, err);
     
-    return {
-      times_cited: Math.floor(Math.random() * 500) + 10,
-      recent_citations: Math.floor(Math.random() * 50) + 1,
-      relative_citation_ratio: parseFloat((Math.random() * 3 + 0.5).toFixed(2)),
-      field_citation_ratio: parseFloat((Math.random() * 5 + 0.8).toFixed(2))
-    };
+    return null;
   }
 }
