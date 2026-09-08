@@ -77,7 +77,8 @@ const chartOption = computed(() => {
         name: 'Paper A',
         type: 'line',
         smooth: true,
-        showSymbol: false,
+        showSymbol: true,
+        symbolSize: 6,
         lineStyle: { width: 3 },
         color: '#3B82F6', // Blue
         data: dataA
@@ -86,7 +87,8 @@ const chartOption = computed(() => {
         name: 'Paper B',
         type: 'line',
         smooth: true,
-        showSymbol: false,
+        showSymbol: true,
+        symbolSize: 6,
         lineStyle: { width: 3 },
         color: '#10B981', // Emerald
         data: dataB

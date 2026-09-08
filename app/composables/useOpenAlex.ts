@@ -8,7 +8,7 @@ interface OpenAlexWork {
   counts_by_year: { year: number; cited_by_count: number }[]
   authorships: {
     author_position: 'first' | 'middle' | 'last'
-    author: { display_name: string }
+    author: { id: string; display_name: string }
   }[]
   primary_location: {
     source?: { display_name: string }
@@ -61,7 +61,7 @@ function buildMetadata(work: OpenAlexWork, doi: string): PaperMetadata {
   }
 }
 
-function buildCitations(work: OpenAlexWork): CitationDynamics {
+function buildCitations(work: OpenAlexWork, selfCitations: number, selfCitationPercentage: number): CitationDynamics {
   const countsByYear = (work.counts_by_year || [])
     .map(c => ({ year: c.year, count: c.cited_by_count }))
     .sort((a, b) => a.year - b.year)
@@ -96,8 +96,8 @@ function buildCitations(work: OpenAlexWork): CitationDynamics {
     growthPercentage,
     citPerYear,
     influentialCitations: 0, // filled by Semantic Scholar
-    selfCitations: 0,
-    selfCitationPercentage: 0,
+    selfCitations,
+    selfCitationPercentage,
     countsByYear,
     peakYear,
     peakCount
@@ -155,10 +155,33 @@ export async function fetchOpenAlexPaper(doi: string): Promise<OpenAlexResult> {
   }
 
   const work = await $fetch<OpenAlexWork>(url)
+  
+  // Compute self-citations
+  let selfCitations = 0
+  let selfCitationPercentage = 0
+  
+  const workId = work.id?.split('/').pop()
+  const authorIds = (work.authorships || [])
+    .map(a => a.author.id?.split('/').pop())
+    .filter(Boolean)
+    
+  if (workId && authorIds.length > 0 && work.cited_by_count > 0) {
+    try {
+      const filter = `cites:${workId},author.id:${authorIds.join('|')}`
+      let scUrl = `https://api.openalex.org/works?filter=${filter}&select=id&per_page=1`
+      if (apiKey) scUrl += `&api_key=${apiKey}`
+      
+      const scData = await $fetch<any>(scUrl)
+      selfCitations = scData.meta?.count || 0
+      selfCitationPercentage = Math.round((selfCitations / work.cited_by_count) * 1000) / 10
+    } catch (e) {
+      console.warn(`Failed to fetch self-citations for ${doi}`, e)
+    }
+  }
 
   return {
     metadata: buildMetadata(work, doi),
-    citations: buildCitations(work),
+    citations: buildCitations(work, selfCitations, selfCitationPercentage),
     crossSource: {
       source: 'OpenAlex',
       citations: work.cited_by_count || 0,
