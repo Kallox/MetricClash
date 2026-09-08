@@ -86,7 +86,7 @@ function swapDois() {
     >
       <section
         v-if="!showResults"
-        class="py-20 md:py-32 overflow-hidden"
+        class="py-10 md:py-16 overflow-hidden"
       >
         <UContainer class="flex flex-col items-center text-center">
           <!-- Version badge -->
@@ -98,12 +98,12 @@ function swapDois() {
           </div>
 
           <!-- Heading -->
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white max-w-3xl leading-tight">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white max-w-4xl leading-tight">
             Compare Research Impact Across Publications
           </h1>
 
           <!-- Subtitle -->
-          <p class="mt-6 text-lg text-gray-500 dark:text-gray-400 max-w-2xl leading-relaxed">
+          <p class="mt-6 text-lg text-gray-500 dark:text-gray-400 max-w-4xl leading-relaxed">
             Enter two DOIs to retrieve citation dynamics, cross-source coverage,
             concept taxonomies, and open science indicators — sourced from
             OpenAlex and Semantic Scholar.
@@ -119,6 +119,7 @@ function swapDois() {
                     v-model="doiA"
                     placeholder="10.48550/arXiv.1706.03762"
                     size="xl"
+                    class="w-full"
                     :ui="{ base: 'pl-12' }"
                   />
                   <span class="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
@@ -143,6 +144,7 @@ function swapDois() {
                     v-model="doiB"
                     placeholder="10.18653/v1/N19-1423"
                     size="xl"
+                    class="w-full"
                     :ui="{ base: 'pl-12' }"
                   />
                   <span class="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
