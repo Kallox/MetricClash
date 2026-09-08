@@ -33,6 +33,11 @@ function fillDefaultDois() {
   doiA.value = '10.1093/database/baae113'
   doiB.value = '10.1038/s41598-025-93654-6'
 }
+
+function clearErrorAndGoBack() {
+  error.value = null
+  data.value = null
+}
 </script>
 
 <template>
@@ -210,7 +215,7 @@ function fillDefaultDois() {
           <ErrorState
             v-else-if="error"
             :message="error"
-            :on-retry="() => handleCompare()"
+            :on-retry="clearErrorAndGoBack"
           />
           <CompareDashboard
             v-else-if="data"
