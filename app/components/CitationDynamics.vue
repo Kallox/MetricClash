@@ -50,7 +50,7 @@ function formatNumber(num: number): string {
         </div>
         
         <p class="text-xs text-gray-400">
-          all time &middot; all sources
+          all time &middot; OpenAlex
         </p>
       </div>
     </div>
