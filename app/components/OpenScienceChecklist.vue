@@ -38,7 +38,7 @@ const props = defineProps<{
           </div>
         </div>
         
-        <UProgress :value="(paperA.openScience.score / paperA.openScience.total) * 100" color="primary" class="mb-6" />
+        <UProgress :model-value="(paperA.openScience.score / paperA.openScience.total) * 100" color="primary" class="mb-6" />
 
         <div class="space-y-4">
           <div v-for="item in paperA.openScience.items" :key="item.label" class="flex justify-between items-center">
@@ -68,7 +68,7 @@ const props = defineProps<{
           </div>
         </div>
         
-        <UProgress :value="(paperB.openScience.score / paperB.openScience.total) * 100" color="success" class="mb-6" />
+        <UProgress :model-value="(paperB.openScience.score / paperB.openScience.total) * 100" color="success" class="mb-6" />
 
         <div class="space-y-4">
           <div v-for="item in paperB.openScience.items" :key="item.label" class="flex justify-between items-center">

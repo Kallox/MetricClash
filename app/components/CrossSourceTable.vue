@@ -55,7 +55,7 @@ function formatCoverage(coverage: number): string {
               {{ formatNumber(source.citations) }}
             </span>
             <UProgress 
-              :value="source.coverage" 
+              :model-value="source.coverage" 
               :color="progressColor" 
               size="sm" 
               class="w-full"
