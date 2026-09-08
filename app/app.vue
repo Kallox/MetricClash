@@ -15,7 +15,7 @@ useHead({
 })
 
 const title = 'MetricClash — Bibliometric Comparison Engine'
-const description = 'Compare research impact across publications. Analyze citation dynamics, cross-source coverage, concept taxonomies, and open science indicators using OpenAlex and Semantic Scholar.'
+const description = 'Compare research impact across publications. Analyze citation dynamics, cross-source coverage, concept taxonomies, and open science indicators using OpenAlex, Semantic Scholar, Crossref, and Dimensions.'
 
 useSeoMeta({
   title,
@@ -27,6 +27,15 @@ useSeoMeta({
 
 const { openAlexOnline, semanticScholarOnline } = useApiHealth()
 const allApisOnline = computed(() => openAlexOnline.value && semanticScholarOnline.value)
+
+const apiSourcesList = [
+  [
+    { label: 'OpenAlex', icon: 'i-lucide-database', to: 'https://openalex.org', target: '_blank' },
+    { label: 'Semantic Scholar', icon: 'i-lucide-book-open', to: 'https://semanticscholar.org', target: '_blank' },
+    { label: 'Crossref', icon: 'i-lucide-link', to: 'https://crossref.org', target: '_blank' },
+    { label: 'Dimensions', icon: 'i-lucide-bar-chart-2', to: 'https://dimensions.ai', target: '_blank' }
+  ]
+]
 </script>
 
 <template>
@@ -54,13 +63,15 @@ const allApisOnline = computed(() => openAlexOnline.value && semanticScholarOnli
       </template>
 
       <template #right>
-        <UButton
-          label="API Sources"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          class="hidden md:inline-flex"
-        />
+        <UDropdownMenu :items="apiSourcesList" :content="{ align: 'end', side: 'bottom' }" class="hidden md:inline-flex">
+          <UButton
+            label="API Sources"
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            trailing-icon="i-lucide-chevron-down"
+          />
+        </UDropdownMenu>
 
         <UColorModeButton />
 
@@ -90,7 +101,7 @@ const allApisOnline = computed(() => openAlexOnline.value && semanticScholarOnli
           </div>
           <USeparator orientation="vertical" class="h-4" />
           <p class="text-sm text-muted">
-            Data sourced from OpenAlex · Semantic Scholar
+            Data sourced from OpenAlex · Semantic Scholar · Crossref · Dimensions
           </p>
         </div>
       </template>

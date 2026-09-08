@@ -116,7 +116,7 @@ function clearErrorAndGoBack() {
           <p class="mt-6 text-lg text-gray-500 dark:text-gray-400 max-w-4xl leading-relaxed">
             Enter two DOIs to retrieve citation dynamics, cross-source coverage,
             concept taxonomies, and open science indicators — sourced from
-            OpenAlex and Semantic Scholar.
+            OpenAlex, Semantic Scholar, Crossref, and Dimensions.
           </p>
 
           <!-- Input Card -->
@@ -189,7 +189,7 @@ function clearErrorAndGoBack() {
                 <!-- Card footer -->
                 <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
                   <span class="text-xs text-gray-400">
-                    OpenAlex · Semantic Scholar
+                    OpenAlex · Semantic Scholar · Crossref · Dimensions
                   </span>
                   <span class="flex items-center gap-1.5 text-xs text-gray-400">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" />
