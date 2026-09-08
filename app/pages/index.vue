@@ -28,6 +28,11 @@ function swapDois() {
   doiA.value = doiB.value
   doiB.value = temp
 }
+
+function fillDefaultDois() {
+  doiA.value = '10.1093/database/baae113'
+  doiB.value = '10.1038/s41598-025-93654-6'
+}
 </script>
 
 <template>
@@ -164,6 +169,17 @@ function swapDois() {
                   <UIcon name="i-lucide-arrow-right" />
                   Analyze & Compare Profiles
                 </UButton>
+
+                <div class="flex justify-center mt-1">
+                  <UButton
+                    variant="ghost"
+                    color="neutral"
+                    size="sm"
+                    @click="fillDefaultDois"
+                  >
+                    Try Example DOIs
+                  </UButton>
+                </div>
 
                 <!-- Card footer -->
                 <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
