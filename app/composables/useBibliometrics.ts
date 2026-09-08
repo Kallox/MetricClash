@@ -2,6 +2,7 @@ import type { ComparisonResult, PaperProfile } from '~/types'
 import { fetchOpenAlexPaper } from './useOpenAlex'
 import { fetchSemanticScholarPaper } from './useSemanticScholar'
 import { fetchDimensionsData, type DimensionsData } from './useDimensions'
+import { fetchCrossrefData, type CrossrefData } from './useCrossref'
 
 export function useBibliometrics() {
   const loading = ref(false)
@@ -15,13 +16,15 @@ export function useBibliometrics() {
 
     try {
       // Run all API calls in parallel
-      const [oaA, oaB, s2A, s2B, dimA, dimB] = await Promise.allSettled([
+      const [oaA, oaB, s2A, s2B, dimA, dimB, crA, crB] = await Promise.allSettled([
         fetchOpenAlexPaper(doiA),
         fetchOpenAlexPaper(doiB),
         fetchSemanticScholarPaper(doiA),
         fetchSemanticScholarPaper(doiB),
         fetchDimensionsData(doiA),
-        fetchDimensionsData(doiB)
+        fetchDimensionsData(doiB),
+        fetchCrossrefData(doiA),
+        fetchCrossrefData(doiB)
       ])
 
       // OpenAlex is required — fail if either paper not found
@@ -35,15 +38,17 @@ export function useBibliometrics() {
       const openAlexA = oaA.value
       const openAlexB = oaB.value
 
-      // Semantic Scholar and Dimensions are optional — use defaults if failed
+      // Semantic Scholar, Dimensions, and Crossref are optional — use defaults if failed
       const s2DataA = s2A.status === 'fulfilled' ? s2A.value : null
       const s2DataB = s2B.status === 'fulfilled' ? s2B.value : null
       const dimDataA = dimA.status === 'fulfilled' ? dimA.value : null
       const dimDataB = dimB.status === 'fulfilled' ? dimB.value : null
+      const crDataA = crA.status === 'fulfilled' ? crA.value : null
+      const crDataB = crB.status === 'fulfilled' ? crB.value : null
 
       // Build profiles by merging sources
-      const paperA = mergeProfile(openAlexA, s2DataA, dimDataA)
-      const paperB = mergeProfile(openAlexB, s2DataB, dimDataB)
+      const paperA = mergeProfile(openAlexA, s2DataA, dimDataA, crDataA)
+      const paperB = mergeProfile(openAlexB, s2DataB, dimDataB, crDataB)
 
       // Calculate cross-source coverage percentages
       calculateCoverage(paperA)
@@ -73,7 +78,8 @@ export function useBibliometrics() {
 function mergeProfile(
   oa: Awaited<ReturnType<typeof fetchOpenAlexPaper>>,
   s2: Awaited<ReturnType<typeof fetchSemanticScholarPaper>> | null,
-  dim: DimensionsData | null
+  dim: DimensionsData | null,
+  cr: CrossrefData | null
 ): PaperProfile {
   const citations = { ...oa.citations }
 
@@ -92,7 +98,7 @@ function mergeProfile(
     },
     {
       source: 'Crossref' as const,
-      citations: 0, // placeholder
+      citations: cr?.citationCount ?? 0,
       coverage: 0
     }
   ]
